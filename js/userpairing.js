@@ -32,8 +32,8 @@ function logDistance(id){
 }
 
 
-function enterRelationship(userID,contactID,relationshipName){
-    var relationshipInfo = [userID,contactID,relationshipName];
+function enterRelationship(contactID,relationshipName){
+    var relationshipInfo = [contactID,relationshipName];
     XDmvc.sendToServer('enterRelationship',relationshipInfo,function(resp){
         if(resp){
             console.log(resp);
@@ -59,15 +59,25 @@ function pairFriends(contactID){
     } );
 }
 
-function checkContactOnline(contactName, contactID, callback){
+function checkContactOnline(contactName, contactID,contactRelation, callback){
     XDmvc.sendToServer('isContactOnline',contactID, function(data){
         if(data) {
             // console.log(data);
             var contactsDeviceList = Object.keys(JSON.parse(data));
             if (contactName) {
-                callback(contactName+"."+contactID , contactsDeviceList);
+                if(contactRelation){
+                    callback([contactName,contactID,contactRelation] , contactsDeviceList);
+                }
+                else{
+                    callback([contactName,contactID] , contactsDeviceList);
+                }
             } else {
-                callback("ONLINE: " + contactID, contactsDeviceList);
+                if(contactRelation){
+                    callback(["no name",contactID,contactRelation], contactsDeviceList);
+                }
+                else{
+                    callback(["no name",contactID], contactsDeviceList);
+                }
             }
         }
     });
@@ -92,8 +102,10 @@ XDMVC.prototype.userSignIn = function userSignIn(userID, callback){
 }
 
 XDMVC.prototype.getFriendsByGroup = function getFriendsByGroup(groupName, callback){
+   
     XDmvc.sendToServer('getFriendsByGroup',groupName,function(friendsInGroup){
         //console.log("friendsInGroup: "+groupName+ " "  + JSON.stringify(friendsInGroup))
+        console.log("getFriends")
         callback(friendsInGroup);
     }.bind(this));
 };
@@ -105,7 +117,7 @@ XDMVC.prototype.sortGroupByDistance = function sortGroupByDistance(group,callbac
 
 XDMVC.prototype.getPairingRequests = function getPairingRequests(){
     console.log("getting pairing requests");
-    XDmvc.sendToServer('checkPairingRequest',"",function(data){
+    this.sendToServer('checkPairingRequest',"",function(data){
         console.log("PAIRING REQUESTS:");
         if(data){
             console.log("emitting pairingrequests");
