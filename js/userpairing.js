@@ -20,14 +20,8 @@ function logLocation(userID,lat,lon){
     XDmvc.sendToServer('logLocation',[userID,lat,lon]);
 }
 
-function logDistance(id){
-    XDmvc.sendToServer('logDistance',id,function(dist){
-        if(dist) {
-            console.log("THE DISTANCE IS: " + dist);
-        }
-        else{
-            console.log("Geolocation not supported");
-        }
+function logDistance(contactID){
+    XDmvc.sendToServer('logDistance',contactID,function(dist){
     });
 }
 
@@ -64,22 +58,9 @@ function checkContactOnline(contactName, contactID,contactRelation, callback){
         if(data) {
             // console.log(data);
             var contactsDeviceList = Object.keys(JSON.parse(data));
-            if (contactName) {
-                if(contactRelation){
-                    callback([contactName,contactID,contactRelation] , contactsDeviceList);
-                }
-                else{
-                    callback([contactName,contactID] , contactsDeviceList);
-                }
-            } else {
-                if(contactRelation){
-                    callback(["no name",contactID,contactRelation], contactsDeviceList);
-                }
-                else{
-                    callback(["no name",contactID], contactsDeviceList);
-                }
-            }
+            callback(contactName,contactID,contactRelation, contactsDeviceList);
         }
+
     });
 }
 
@@ -102,10 +83,8 @@ XDMVC.prototype.userSignIn = function userSignIn(userID, callback){
 }
 
 XDMVC.prototype.getFriendsByGroup = function getFriendsByGroup(groupName, callback){
-   
     XDmvc.sendToServer('getFriendsByGroup',groupName,function(friendsInGroup){
         //console.log("friendsInGroup: "+groupName+ " "  + JSON.stringify(friendsInGroup))
-        console.log("getFriends")
         callback(friendsInGroup);
     }.bind(this));
 };
@@ -116,14 +95,10 @@ XDMVC.prototype.sortGroupByDistance = function sortGroupByDistance(group,callbac
 };
 
 XDMVC.prototype.getPairingRequests = function getPairingRequests(){
-    console.log("getting pairing requests");
     this.sendToServer('checkPairingRequest',"",function(data){
-        console.log("PAIRING REQUESTS:");
         if(data){
-            console.log("emitting pairingrequests");
             console.log(data);
             this.emit('newPairingRequests', data);
-
         }
         else{
             console.log("no pairing requests");
@@ -147,7 +122,6 @@ function showPosition(position) {
         var split_list = user_id.split('.')
         var payload = split_list[1];
         var userID_decoded = JSON.parse(atob(payload).toString()).sub;
-        // console.log("hey");
         logLocation(userID_decoded,latitude,longitude);
     }
 }
