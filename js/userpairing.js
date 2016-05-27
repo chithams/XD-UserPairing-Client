@@ -11,7 +11,7 @@ XDMVC.prototype.getSth = function getSth (){
         }
         else{
             console.log("#####");
-         }
+        }
     });
     this.emit('getSth', "nobody");
 };
@@ -41,16 +41,17 @@ function userSignOut(userID){
     });
 }
 
-function pairFriends(contactID){
-    XDmvc.sendToServer('pairfriends',contactID,function(data){
+XDMVC.prototype.pairFriends = function pairFriends(contactID){
+    this.sendToServer('pairfriends',contactID,function(data){
         if(data){
             console.log("pairFriends connecting to: " + data.toString());
+            this.emit("deleteDisplayedRequest", contactID);
             XDmvc.connectTo(data.toString());
         }
         else {
             console.log("no device found");
         }
-    } );
+    }.bind(this));
 }
 
 function checkContactOnline(contactName, contactID,contactRelation, callback){
@@ -64,12 +65,13 @@ function checkContactOnline(contactName, contactID,contactRelation, callback){
     });
 }
 
-function declinePairingRequest(contactID){
-    XDmvc.sendToServer('declinePairingRequest',contactID,function(resp){
+XDMVC.prototype.declinePairingRequest = function declinePairingRequest(contactID){
+    this.sendToServer('declinePairingRequest',contactID,function(resp){
         if(resp){
             console.log(resp);
+            this.emit("deleteDisplayedRequest", contactID);
         }
-    });
+    }.bind(this));
 }
 
 function removeDevice(){
@@ -110,7 +112,7 @@ function  getLocation() {
     if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(this.showPosition)
     } else {
-       console.log("Geolocation is not supported by this browser.");
+        console.log("Geolocation is not supported by this browser.");
     }
 }
 function showPosition(position) {
@@ -125,3 +127,4 @@ function showPosition(position) {
         logLocation(userID_decoded,latitude,longitude);
     }
 }
+
