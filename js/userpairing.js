@@ -21,7 +21,8 @@ function logLocation(userID,lat,lon){
 }
 
 function logDistance(contactID){
-    XDmvc.sendToServer('logDistance',contactID);
+    XDmvc.sendToServer('logDistance',contactID,function(dist){
+    });
 }
 
 
