@@ -18,13 +18,12 @@ XDMVC.prototype.getSth = function getSth (){
 
 XDMVC.prototype.logLocation = function logLocation(userID,lat,lon){
     XDmvc.sendToServer('logLocation',[userID,lat,lon]);
-}
+};
 
 XDMVC.prototype.logDistance = function logDistance(contactID){
     XDmvc.sendToServer('logDistance',contactID,function(dist){
     });
-}
-
+};
 
 XDMVC.prototype.enterRelationship = function enterRelationship(contactID,relationshipName){
     var relationshipInfo = [contactID,relationshipName];
@@ -33,13 +32,13 @@ XDMVC.prototype.enterRelationship = function enterRelationship(contactID,relatio
             console.log(resp);
         }
     }.bind(this));
-}
+};
 
 XDMVC.prototype.userSignOut = function userSignOut(userID){
     XDmvc.sendToServer('userSignOut', userID, function(res){
         console.log(res);
     });
-}
+};
 
 XDMVC.prototype.pairFriends = function pairFriends(contactID){
     this.sendToServer('pairfriends',contactID,function(data){
@@ -52,7 +51,7 @@ XDMVC.prototype.pairFriends = function pairFriends(contactID){
             console.log("no device found");
         }
     }.bind(this));
-}
+};
 
 XDMVC.prototype.checkContactOnline = function checkContactOnline(contactName, contactID,contactRelation, callback){
     XDmvc.sendToServer('isContactOnline',contactID, function(data){
@@ -62,7 +61,7 @@ XDMVC.prototype.checkContactOnline = function checkContactOnline(contactName, co
             this.emit("onlineContact", contactName,contactID,contactRelation, contactsDeviceList);
         }
     }.bind(this));
-}
+};
 
 XDMVC.prototype.declinePairingRequest = function declinePairingRequest(contactID){
     this.sendToServer('declinePairingRequest',contactID,function(resp){
@@ -71,17 +70,17 @@ XDMVC.prototype.declinePairingRequest = function declinePairingRequest(contactID
             this.emit("deleteDisplayedRequest", contactID);
         }
     }.bind(this));
-}
+};
 
 XDMVC.prototype.removeDevice = function removeDevice(){
     XDmvc.sendToServer('removeDevice');
-}
+};
 
 XDMVC.prototype.userSignIn = function userSignIn(userID, callback){
     XDmvc.sendToServer('userSignIn',userID, function(data){
         callback(data);
     }.bind(this));
-}
+};
 
 XDMVC.prototype.getFriendsByGroup = function getFriendsByGroup(groupName, callback){
     XDmvc.sendToServer('getFriendsByGroup',groupName,function(friendsInGroup){
@@ -110,6 +109,7 @@ XDMVC.prototype.getPairingRequests = function getPairingRequests(){
 XDMVC.prototype.getLocation = function  getLocation() {
     if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(this.showPosition)
+        //TODO: check if this.showPosition works correctly
     } else {
         console.log("Geolocation is not supported by this browser.");
     }
