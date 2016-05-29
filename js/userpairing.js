@@ -16,26 +16,26 @@ XDMVC.prototype.getSth = function getSth (){
     this.emit('getSth', "nobody");
 };
 
-function logLocation(userID,lat,lon){
+XDMVC.prototype.logLocation = function logLocation(userID,lat,lon){
     XDmvc.sendToServer('logLocation',[userID,lat,lon]);
 }
 
-function logDistance(contactID){
+XDMVC.prototype.logDistance = function logDistance(contactID){
     XDmvc.sendToServer('logDistance',contactID,function(dist){
     });
 }
 
 
-function enterRelationship(contactID,relationshipName){
+XDMVC.prototype.enterRelationship = function enterRelationship(contactID,relationshipName){
     var relationshipInfo = [contactID,relationshipName];
     XDmvc.sendToServer('enterRelationship',relationshipInfo,function(resp){
         if(resp){
             console.log(resp);
         }
-    });
+    }.bind(this));
 }
 
-function userSignOut(userID){
+XDMVC.prototype.userSignOut = function userSignOut(userID){
     XDmvc.sendToServer('userSignOut', userID, function(res){
         console.log(res);
     });
@@ -54,15 +54,14 @@ XDMVC.prototype.pairFriends = function pairFriends(contactID){
     }.bind(this));
 }
 
-function checkContactOnline(contactName, contactID,contactRelation, callback){
+XDMVC.prototype.checkContactOnline = function checkContactOnline(contactName, contactID,contactRelation, callback){
     XDmvc.sendToServer('isContactOnline',contactID, function(data){
         if(data) {
             // console.log(data);
             var contactsDeviceList = Object.keys(JSON.parse(data));
-            callback(contactName,contactID,contactRelation, contactsDeviceList);
+            this.emit("onlineContact", contactName,contactID,contactRelation, contactsDeviceList);
         }
-
-    });
+    }.bind(this));
 }
 
 XDMVC.prototype.declinePairingRequest = function declinePairingRequest(contactID){
@@ -74,7 +73,7 @@ XDMVC.prototype.declinePairingRequest = function declinePairingRequest(contactID
     }.bind(this));
 }
 
-function removeDevice(){
+XDMVC.prototype.removeDevice = function removeDevice(){
     XDmvc.sendToServer('removeDevice');
 }
 
@@ -108,23 +107,23 @@ XDMVC.prototype.getPairingRequests = function getPairingRequests(){
     }.bind(this));
 };
 ////////////////////////
-function  getLocation() {
+XDMVC.prototype.getLocation = function  getLocation() {
     if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(this.showPosition)
     } else {
         console.log("Geolocation is not supported by this browser.");
     }
-}
-function showPosition(position) {
+};
+XDMVC.prototype.showPosition = function showPosition(position) {
     console.log(position);
     var latitude = position.coords.latitude;
     var longitude = position.coords.longitude;
     console.log(latitude+' / '+longitude);
     if(user_id){
-        var split_list = user_id.split('.')
+        var split_list = user_id.split('.');
         var payload = split_list[1];
         var userID_decoded = JSON.parse(atob(payload).toString()).sub;
-        logLocation(userID_decoded,latitude,longitude);
+        XDmvc.logLocation(userID_decoded,latitude,longitude);
     }
-}
+};
 
