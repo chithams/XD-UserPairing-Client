@@ -111,7 +111,7 @@ XDMVC.prototype.getLocation = function  getLocation(user_id) {
         navigator.geolocation.getCurrentPosition(this.showPosition);
         //TODO: check if this.showPosition works correctly
     } else {
-        console.log("Geolocation is not supported by this browser.");
+        console.log("Geolocation is not suppemorted by this browser.");
     }
 };
 XDMVC.prototype.showPosition = function showPosition(position) {
