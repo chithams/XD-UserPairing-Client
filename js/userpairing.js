@@ -106,9 +106,9 @@ XDMVC.prototype.getPairingRequests = function getPairingRequests(){
     }.bind(this));
 };
 ////////////////////////
-XDMVC.prototype.getLocation = function  getLocation() {
+XDMVC.prototype.getLocation = function  getLocation(user_id) {
     if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(this.showPosition)
+        navigator.geolocation.getCurrentPosition(this.showPosition);
         //TODO: check if this.showPosition works correctly
     } else {
         console.log("Geolocation is not supported by this browser.");
@@ -119,11 +119,6 @@ XDMVC.prototype.showPosition = function showPosition(position) {
     var latitude = position.coords.latitude;
     var longitude = position.coords.longitude;
     console.log(latitude+' / '+longitude);
-    if(user_id){
-        var split_list = user_id.split('.');
-        var payload = split_list[1];
-        var userID_decoded = JSON.parse(atob(payload).toString()).sub;
-        XDmvc.logLocation(userID_decoded,latitude,longitude);
-    }
+    XDmvc.logLocation(latitude,longitude);
 };
 
