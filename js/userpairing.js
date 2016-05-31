@@ -76,9 +76,10 @@ XDMVC.prototype.removeDevice = function removeDevice(){
     XDmvc.sendToServer('removeDevice');
 };
 
-XDMVC.prototype.userSignIn = function userSignIn(userID, callback){
+XDMVC.prototype.userSignIn = function userSignIn(userID){
     XDmvc.sendToServer('userSignIn',userID, function(data){
-        callback(data);
+        //callback(data);
+        this.emit('usersOtherDevices', data);
     }.bind(this));
 };
 
