@@ -37,7 +37,8 @@ XDMVC.prototype.enterRelationship = function enterRelationship(contactID,relatio
 XDMVC.prototype.userSignOut = function userSignOut(userID){
     XDmvc.sendToServer('userSignOut', userID, function(res){
         console.log(res);
-    });
+        this.emit("signedOut", userID);
+    }.bind(this));
 };
 
 XDMVC.prototype.pairFriends = function pairFriends(contactID){
@@ -79,6 +80,7 @@ XDMVC.prototype.removeDevice = function removeDevice(){
 XDMVC.prototype.userSignIn = function userSignIn(userID){
     XDmvc.sendToServer('userSignIn',userID, function(data){
         //callback(data);
+        this.emit('signedIn', data);
         this.emit('usersOtherDevices', data);
     }.bind(this));
 };
@@ -89,11 +91,23 @@ XDMVC.prototype.getFriendsByGroup = function getFriendsByGroup(groupName, callba
         callback(friendsInGroup);
     }.bind(this));
 };
+XDMVC.prototype.getFriendsSelected = function getFriendsSelected(groups, callback){
+    var numGroups = groups.length;
+    var groupName;
+    var result = [];
+    XDmvc.sendToServer('getFriendsSelected',groups,function(data){
+        console.log(data);
+        callback(data);
+    }.bind(this))
+
+};
+
 XDMVC.prototype.sortGroupByDistance = function sortGroupByDistance(group,callback){
     XDmvc.sendToServer('sortGroupByDistance',group,function(sortedGroup){
         callback(sortedGroup);
     }.bind(this));
 };
+
 
 XDMVC.prototype.getPairingRequests = function getPairingRequests(){
     this.sendToServer('checkPairingRequest',"",function(data){
