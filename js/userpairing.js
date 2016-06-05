@@ -107,10 +107,9 @@ XDMVC.prototype.getPairingRequests = function getPairingRequests(){
     }.bind(this));
 };
 ////////////////////////
-XDMVC.prototype.getLocation = function  getLocation(user_id) {
+XDMVC.prototype.getLocation = function  getLocation() {
     if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(this.showPosition);
-        //TODO: check if this.showPosition works correctly
     } else {
         console.log("Geolocation is not suppemorted by this browser.");
     }

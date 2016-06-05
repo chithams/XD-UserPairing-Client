@@ -6,6 +6,7 @@
 
 <dom-module id="page-layout">
     <template>
+
         <xdmvc-devices id="devices" devices="{{devices}}" ></xdmvc-devices>
         <xdmvc-synchronised id="sync"
                             objects='{{pages}}'>
@@ -13,7 +14,7 @@
         <xdmvc-roles roles="{{roles}}"  available='["pages"]'>
         </xdmvc-roles>
 
-        <iron-pages id="pages" selected="{{selected}}">
+        <iron-pages id="pages" selected="{{selected}}" style="width:100%;height:100%">
             <content></content>
         </iron-pages>
     </template>

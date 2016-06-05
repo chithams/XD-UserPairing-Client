@@ -2,7 +2,7 @@
 <link rel="import" href="../polymer/xdmvc-roles.html">
 
 <dom-module id="controller-layout">
-    <template>
+    <template style="width:100%;height:100%" >
 
         <xdmvc-roles id="roles"
                      available='["controller", "viewer"]'
@@ -13,7 +13,7 @@
             <content select=".controller">
             </content>
         </template>
-        <template is="dom-if" if="{{roles.isselected.viewer}}" restamp>
+        <template is="dom-if" if="{{roles.isselected.viewer}}"  restamp>
             <content select=".viewer">
             </content>
         </template>
