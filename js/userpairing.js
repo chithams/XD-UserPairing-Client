@@ -42,9 +42,21 @@ XDMVC.prototype.userSignOut = function userSignOut(userID){
 };
 
 XDMVC.prototype.pairFriends = function pairFriends(contactID){
-    this.sendToServer('pairfriends',contactID,function(data){
+    this.sendToServer('pairfriends',["contact",contactID],function(data){
         if(data){
             console.log("pairFriends connecting to: " + data.toString());
+            this.emit("deleteDisplayedRequest", contactID);
+            XDmvc.connectTo(data.toString());
+        }
+        else {
+            console.log("no device found");
+        }
+    }.bind(this));
+};
+XDMVC.prototype.pairDevice = function pairDevice(deviceID,contactID){
+    this.sendToServer('pairFriends',["device",deviceID,contactID],function(data){
+        if(data){
+            console.log("pairDevice connecting to: " + data.toString());
             this.emit("deleteDisplayedRequest", contactID);
             XDmvc.connectTo(data.toString());
         }
@@ -58,7 +70,7 @@ XDMVC.prototype.checkContactOnline = function checkContactOnline(contactName, co
     XDmvc.sendToServer('isContactOnline',contactID, function(data){
         if(data) {
             // console.log(data);
-            var contactsDeviceList = Object.keys(JSON.parse(data));
+            var contactsDeviceList = JSON.parse(data);
             this.emit("onlineContact", contactName,contactID,contactRelation, contactsDeviceList);
         }
     }.bind(this));
@@ -85,18 +97,10 @@ XDMVC.prototype.userSignIn = function userSignIn(userID){
     }.bind(this));
 };
 
-XDMVC.prototype.getFriendsByGroup = function getFriendsByGroup(groupName, callback){
-    XDmvc.sendToServer('getFriendsByGroup',groupName,function(friendsInGroup){
-        //console.log("friendsInGroup: "+groupName+ " "  + JSON.stringify(friendsInGroup))
-        callback(friendsInGroup);
-    }.bind(this));
-};
 XDMVC.prototype.getFriendsSelected = function getFriendsSelected(groups, callback){
-    var numGroups = groups.length;
-    var groupName;
-    var result = [];
+
     XDmvc.sendToServer('getFriendsSelected',groups,function(data){
-        console.log(data);
+        // console.log(data);
         callback(data);
     }.bind(this))
 
@@ -116,7 +120,7 @@ XDMVC.prototype.getPairingRequests = function getPairingRequests(){
             this.emit('newPairingRequests', data);
         }
         else{
-            console.log("no pairing requests");
+            // console.log("no pairing requests");
         }
     }.bind(this));
 };
