@@ -54,7 +54,7 @@ XDMVC.prototype.pairFriends = function pairFriends(contactID){
     }.bind(this));
 };
 XDMVC.prototype.pairDevice = function pairDevice(deviceID,contactID){
-    this.sendToServer('pairFriends',["device",deviceID,contactID],function(data){
+    this.sendToServer('pairfriends',["device",deviceID,contactID],function(data){
         if(data){
             console.log("pairDevice connecting to: " + data.toString());
             this.emit("deleteDisplayedRequest", contactID);
