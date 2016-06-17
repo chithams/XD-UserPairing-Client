@@ -3,23 +3,37 @@
  */
 
 
-XDMVC.prototype.getSth = function getSth (){
-    this.sendToServer('hello','',function(resp){
-        if(resp){
-            console.log("***");
-            console.log(resp);
-        }
-        else{
-            console.log("#####");
-        }
-    });
-    this.emit('getSth', "nobody");
+XDMVC.prototype.userSignIn = function userSignIn(userID){
+    XDmvc.sendToServer('userSignIn',userID, function(data){
+        //callback(data);
+        this.emit('signedIn', data);
+        this.emit('usersOtherDevices', data);
+    }.bind(this));
+};
+XDMVC.prototype.userSignOut = function userSignOut(userID){
+    XDmvc.sendToServer('userSignOut', userID, function(res){
+        console.log(res);
+        this.emit("signedOut", userID);
+    }.bind(this));
 };
 
-XDMVC.prototype.logLocation = function logLocation(userID,lat,lon){
-    XDmvc.sendToServer('logLocation',[userID,lat,lon]);
+XDMVC.prototype.getLocation = function  getLocation() {
+    if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(this.showPosition);
+    } else {
+        console.log("Geolocation is not suppemorted by this browser.");
+    }
 };
-
+XDMVC.prototype.showPosition = function showPosition(position) {
+    console.log(position);
+    var latitude = position.coords.latitude;
+    var longitude = position.coords.longitude;
+    console.log(latitude+' / '+longitude);
+    XDmvc.logLocation(latitude,longitude);
+};
+XDMVC.prototype.logLocation = function logLocation(lat,lon){
+    XDmvc.sendToServer('logLocation',[lat,lon]);
+};
 XDMVC.prototype.logDistance = function logDistance(contactID){
     XDmvc.sendToServer('logDistance',contactID,function(dist){
     });
@@ -33,14 +47,15 @@ XDMVC.prototype.enterRelationship = function enterRelationship(contactID,relatio
         }
     }.bind(this));
 };
-
-XDMVC.prototype.userSignOut = function userSignOut(userID){
-    XDmvc.sendToServer('userSignOut', userID, function(res){
-        console.log(res);
-        this.emit("signedOut", userID);
+XDMVC.prototype.checkContactOnline = function checkContactOnline(contactName, contactID,contactRelation, callback){
+    XDmvc.sendToServer('isContactOnline',contactID, function(data){
+        if(data) {
+            console.log("YES");
+            var contactsDeviceList = JSON.parse(data);
+            this.emit("onlineContact", contactName,contactID,contactRelation, contactsDeviceList);
+        }
     }.bind(this));
 };
-
 XDMVC.prototype.pairFriends = function pairFriends(contactID){
     this.sendToServer('pairfriends',["contact",contactID],function(data){
         if(data){
@@ -65,17 +80,6 @@ XDMVC.prototype.pairDevice = function pairDevice(deviceID,contactID){
         }
     }.bind(this));
 };
-
-XDMVC.prototype.checkContactOnline = function checkContactOnline(contactName, contactID,contactRelation, callback){
-    XDmvc.sendToServer('isContactOnline',contactID, function(data){
-        if(data) {
-            // console.log(data);
-            var contactsDeviceList = JSON.parse(data);
-            this.emit("onlineContact", contactName,contactID,contactRelation, contactsDeviceList);
-        }
-    }.bind(this));
-};
-
 XDMVC.prototype.declinePairingRequest = function declinePairingRequest(contactID){
     this.sendToServer('declinePairingRequest',contactID,function(resp){
         if(resp){
@@ -84,17 +88,8 @@ XDMVC.prototype.declinePairingRequest = function declinePairingRequest(contactID
         }
     }.bind(this));
 };
-
 XDMVC.prototype.removeDevice = function removeDevice(){
     XDmvc.sendToServer('removeDevice');
-};
-
-XDMVC.prototype.userSignIn = function userSignIn(userID){
-    XDmvc.sendToServer('userSignIn',userID, function(data){
-        //callback(data);
-        this.emit('signedIn', data);
-        this.emit('usersOtherDevices', data);
-    }.bind(this));
 };
 
 XDMVC.prototype.getFriendsSelected = function getFriendsSelected(groups, callback){
@@ -105,14 +100,11 @@ XDMVC.prototype.getFriendsSelected = function getFriendsSelected(groups, callbac
     }.bind(this))
 
 };
-
 XDMVC.prototype.sortGroupByDistance = function sortGroupByDistance(group,callback){
     XDmvc.sendToServer('sortGroupByDistance',group,function(sortedGroup){
         callback(sortedGroup);
     }.bind(this));
 };
-
-
 XDMVC.prototype.getPairingRequests = function getPairingRequests(){
     this.sendToServer('checkPairingRequest',"",function(data){
         if(data){
@@ -124,19 +116,18 @@ XDMVC.prototype.getPairingRequests = function getPairingRequests(){
         }
     }.bind(this));
 };
-////////////////////////
-XDMVC.prototype.getLocation = function  getLocation() {
-    if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(this.showPosition);
-    } else {
-        console.log("Geolocation is not suppemorted by this browser.");
-    }
-};
-XDMVC.prototype.showPosition = function showPosition(position) {
-    console.log(position);
-    var latitude = position.coords.latitude;
-    var longitude = position.coords.longitude;
-    console.log(latitude+' / '+longitude);
-    XDmvc.logLocation(latitude,longitude);
-};
 
+XDMVC.prototype.configureGroups = function configureGroups(groups){
+    var indexes = Object.keys(groups);
+
+    var groupInfo = {};
+    for(var i = 0; i < indexes.length; i ++){
+        var obj = groups[indexes[i]];
+        console.log(obj)
+        groupInfo[obj["name"]] = obj["requiresAck"];
+    }
+
+    console.log(groupInfo);
+
+    this.sendToServer('configGroups',groupInfo);
+};
