@@ -5,9 +5,7 @@
 
 XDMVC.prototype.userSignIn = function userSignIn(userID){
     XDmvc.sendToServer('userSignIn',userID, function(data){
-        //callback(data);
         this.emit('signedIn', data);
-        this.emit('usersOtherDevices', data);
     }.bind(this));
 };
 XDMVC.prototype.userSignOut = function userSignOut(userID){
