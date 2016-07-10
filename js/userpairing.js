@@ -4,8 +4,8 @@
 
 
 XDMVC.prototype.userSignIn = function userSignIn(userID){
-    XDmvc.sendToServer('userSignIn',userID, function(data){
-        this.emit('signedIn', data);
+    XDmvc.sendToServer('userSignIn',userID, function(deviceId){
+        this.emit('signedIn', deviceId);
     }.bind(this));
 };
 XDMVC.prototype.userSignOut = function userSignOut(userID){
@@ -45,12 +45,12 @@ XDMVC.prototype.enterRelationship = function enterRelationship(contactID,relatio
         }
     }.bind(this));
 };
-XDMVC.prototype.checkContactOnline = function checkContactOnline(contactName, contactID,contactRelation, callback){
+XDMVC.prototype.checkContactOnline = function checkContactOnline(contactName, contactID,relationshipName, callback){
     XDmvc.sendToServer('isContactOnline',contactID, function(data){
         if(data) {
             console.log("YES");
-            var contactsDeviceList = JSON.parse(data);
-            this.emit("onlineContact", contactName,contactID,contactRelation, contactsDeviceList);
+            var deviceList = JSON.parse(data);
+            this.emit("onlineContact", contactName,contactID,relationshipName, deviceList);
         }
     }.bind(this));
 };
@@ -106,8 +106,9 @@ XDMVC.prototype.sortGroupByDistance = function sortGroupByDistance(group,callbac
 XDMVC.prototype.getPairingRequests = function getPairingRequests(){
     this.sendToServer('checkPairingRequest',"",function(data){
         if(data){
-            console.log(data);
-            this.emit('newPairingRequests', data);
+            console.log(contactList);
+            var contactList = Object.keys(JSON.parse(data));
+            this.emit('newPairingRequests', contactList);
         }
         else{
             // console.log("no pairing requests");
