@@ -90,17 +90,17 @@ XDMVC.prototype.removeDevice = function removeDevice(){
     XDmvc.sendToServer('removeDevice');
 };
 
-XDMVC.prototype.getFriendsSelected = function getFriendsSelected(groups, callback){
+XDMVC.prototype.getFriendsSelected = function getFriendsSelected(groupNames, callback){
 
-    XDmvc.sendToServer('getFriendsSelected',groups,function(data){
+    XDmvc.sendToServer('getFriendsSelected',groupNames,function(data){
         // console.log(data);
         callback(data);
     }.bind(this))
 
 };
-XDMVC.prototype.sortGroupByDistance = function sortGroupByDistance(group,callback){
-    XDmvc.sendToServer('sortGroupByDistance',group,function(sortedGroup){
-        callback(sortedGroup);
+XDMVC.prototype.sortGroupByDistance = function sortGroupByDistance(contactList,callback){
+    XDmvc.sendToServer('sortGroupByDistance',contactList,function(sortedContactList){
+        callback(sortedContactList)
     }.bind(this));
 };
 XDMVC.prototype.getPairingRequests = function getPairingRequests(){
